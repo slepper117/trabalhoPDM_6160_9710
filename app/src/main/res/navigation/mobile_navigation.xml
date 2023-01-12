@@ -12,14 +12,45 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="ipca.pdm.a6160a9710.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_areas"
+        android:name="ipca.pdm.a6160a9710.ui.areas.AreasFragment"
+        android:label="@string/menu_areas"
+        tools:layout="@layout/fragment_areas" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="ipca.pdm.a6160a9710.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_bookings"
+        android:name="ipca.pdm.a6160a9710.ui.bookings.BookingsFragment"
+        android:label="@string/menu_bookings"
+        tools:layout="@layout/fragment_bookings" >
+        <action
+            android:id="@+id/action_nav_bookings_to_bookingAddFragment"
+            app:destination="@id/bookingAddFragment" />
+        <action
+            android:id="@+id/action_nav_bookings_to_bookingDetailsFragment"
+            app:destination="@id/bookingDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_clocks"
+        android:name="ipca.pdm.a6160a9710.ui.clocks.ClocksFragment"
+        android:label="@string/menu_clocks"
+        tools:layout="@layout/fragment_clocks" />
+    <fragment
+        android:id="@+id/bookingAddFragment"
+        android:name="ipca.pdm.a6160a9710.ui.bookings.BookingAddFragment"
+        android:label="@string/menu_bookings_add"
+        tools:layout="@layout/fragment_booking_add" />
+    <fragment
+        android:id="@+id/bookingDetailsFragment"
+        android:name="ipca.pdm.a6160a9710.ui.bookings.BookingDetailsFragment"
+        android:label="@string/menu_bookings_details"
+        tools:layout="@layout/fragment_booking_details" >
+        <action
+            android:id="@+id/action_bookingDetailsFragment_to_bookingUpdateFragment"
+            app:destination="@id/bookingUpdateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookingUpdateFragment"
+        android:name="ipca.pdm.a6160a9710.ui.bookings.BookingUpdateFragment"
+        android:label="@string/menu_bookings_update" />
 </navigation>
