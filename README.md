@@ -25,6 +25,199 @@ Outras adições que sejam necessárias para o bom funcionamento da aplicação 
 
 ## Exemplo de Operações
 
+Na seguinte imagem explica a navegação na app. O menu principal terá a lista dos bookings e tem duas alternativas seguintes: 
+AddFragment para adicionar um novo booking onde tem duas textView para o utilizador preencher a descrição e a sala.
+DetailsFragment que lista os detalhes do booking e onde o utilizador tem mais duas alternativas. Editar o booking ou eliminar, por fim faz update ao booking para guardar possiveis alterações.
+
+
+![Alt text](img/Screenshot%20from%202023-01-16%2023-39-05.png)
+
+Login Activity
+
+
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.loginBtn.setOnClickListener {
+            val username = binding.loginUsername.text.toString()
+            val password = binding.loginPassword.text.toString()
+
+            val json = JSONObject()
+            json.put("username", username)
+            json.put("password", password)
+
+            RootBackend.login(baseContext, lifecycleScope, json) {
+                if (it) startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                else Toast.makeText(baseContext, "Autenticação Falhada", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+```
+
+
+-Bookings Adapter
+
+Foi utilizado o BaseAdapter para retornar os booking e os respectivos campos: UserName, Description e StartDate
+
+```kotlin
+inner class BookingsAdapter : BaseAdapter() {
+        override fun getCount(): Int {
+            return bookings.size
+        }
+
+        override fun getItem(i: Int): Any {
+            return bookings[i]
+        }
+
+        override fun getItemId(p0: Int): Long {
+            return 0L
+        }
+
+        override fun getView(i: Int, view: View?, viewGroup: ViewGroup?): View {
+            val rowBooking = layoutInflater.inflate(R.layout.row_booking, viewGroup, false)
+            val userName = rowBooking.findViewById<TextView>(R.id.rwBookingUserName)
+            val description = rowBooking.findViewById<TextView>(R.id.rwBookingDescription)
+            val startDate = rowBooking.findViewById<TextView>(R.id.rwBookingStartDate)
+
+            val booking = bookings[i]
+            userName.text = booking.userName
+            description.text = booking.description
+            startDate.text = booking.startDate?.parseDateFull()
+
+            rowBooking.setOnClickListener {
+                findNavController().navigate(
+                    R.id.action_nav_bookings_to_bookingDetailsFragment,
+                    Bundle().apply {
+                        putInt(BookingDetailsFragment.BOOKING_ID, booking.id!!)
+                    }
+                )
+            }
+
+            return rowBooking
+        }
+    }
+```
+
+-Add Fragment
+
+Com o binding adicionamos a descrição e a sala inseridos na textView.
+```kotlin
+binding.bookingAddDescription.editText?.doOnTextChanged { inputText, _, _, _ ->
+            description = inputText.toString()
+        }
+
+        binding.bookingAddRoom.editText?.doOnTextChanged { inputText, _, _, _ ->
+            room = inputText.toString().toInt()
+        }
+```
+Para a data e hora foi implementado o MaterialDatePicker e MaterialTimePicker
+
+```kotlin
+binding.bookingAddFinalTimeBtn.setOnClickListener {
+            val picker =
+                MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(12)
+                    .setMinute(10)
+                    .setTitleText("Selecione a Hora Inicial")
+                    .build()
+            picker.show(this.requireActivity().supportFragmentManager, "tag")
+            val hour = picker.hour.toString()
+            val minute = picker.minute.toString()
+            binding.bookingAddStartTime.text = "${hour}:${minute}"        }
+
+        binding.bookingAddFinalDateBtn.setOnClickListener {
+            val datePicker =
+                MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Selecione a Data Final")
+                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                    .build()
+            datePicker.show(this.requireActivity().supportFragmentManager, "tag");
+            binding.bookingAddFinalDate.text = datePicker.selection?.parseLongToDateString()
+        }
+
+        binding.bookingAddFinalTimeBtn.setOnClickListener {
+            val picker =
+                MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(12)
+                    .setMinute(10)
+                    .setTitleText("Selecione a Hora Final")
+                    .build()
+            picker.show(this.requireActivity().supportFragmentManager, "tag")
+            val hour = picker.hour.toString()
+            val minute = picker.minute.toString()
+            binding.bookingAddFinalTime.text = "${hour}:${minute}"
+        }
+
+```
+Exceção de erro ao adicionar booking caso campos estejam vazios.
+```kotlin
+binding.bookingAddBtn.setOnClickListener {
+            if (description == null || room == null ) {
+                Toast.makeText(context, "Campos vazios", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+```
+
+Coloca dados num objecto json e comunica à API
+```
+val json = JSONObject()
+            json.put("description", description)
+            json.put("room", room)
+            json.put("start", startDateTime)
+            json.put("final", finalDateTime)
+
+            val context = activity?.baseContext
+            if (context != null) {
+                BookingsBackend.postBooking(context, lifecycleScope, json) {
+                    if (it) parentFragmentManager.popBackStack()
+                    else Toast.makeText(context, "Criação Falhada", Toast.LENGTH_SHORT).show()
+                }
+            }
+```
+
+-Details Fragment
+Com o context, verificamos se tem dados e são retornados para as respectivas variaveis
+```kotlin
+if (context != null) {
+            BookingsBackend.getBooking(context, lifecycleScope, bookingID!!) {
+                binding.BookingDetailsDescription.text = it.description
+                binding.BookingDetailsStartDate.text = it.startDate!!.parseDateFull()
+                binding.BookingDetailsFinalDate.text = it.finalDate!!.parseDateFull()
+                binding.BookingDetailsRoom.text = it.roomName
+                binding.BookingDetailsUser.text = it.userName
+                binding.BookingDetailsValidated.text = if (it.validated == true) "Está validado" else "Não está validado"
+            }
+        }
+```
+
+Botão Update e Delete
+```kotlin
+binding.BookingDetailsBtnUpdate.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_bookingDetailsFragment_to_bookingUpdateFragment,
+                Bundle().apply {
+                    putInt(BookingDetailsFragment.BOOKING_ID, bookingID!!)
+                }
+            )
+        }
+
+        binding.BookingDetailsBtnDelete.setOnClickListener {
+            if (context != null) {
+                BookingsBackend.deleteBooking(context, lifecycleScope, bookingID!!) {
+                    if (it) parentFragmentManager.popBackStack()
+                    else Toast.makeText(context, "Destruição Falhada", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+```
+
+
 
 ## Conclusão
 Com a execução deste trabalho, acreditamos ter concluído com sucesso os objetivos que nos propusemos a concretizar.
