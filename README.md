@@ -1,4 +1,5 @@
 # trabalhoPDM_6160_9710
+
 Projeto desenvolvido para a disciplina de Progamação de Dispositivos Móveis
 
 ## Introdução
@@ -25,15 +26,13 @@ Outras adições que sejam necessárias para o bom funcionamento da aplicação 
 
 ## Exemplo de Operações
 
-Na seguinte imagem explica a navegação na app. O menu principal terá a lista dos bookings e tem duas alternativas seguintes: 
-AddFragment para adicionar um novo booking onde tem duas textView para o utilizador preencher a descrição e a sala.
-DetailsFragment que lista os detalhes do booking e onde o utilizador tem mais duas alternativas. Editar o booking ou eliminar, por fim faz update ao booking para guardar possiveis alterações.
+Neste capitulo mostraremos alguns exemplos de operações que a App suporta.
 
+### Login Activity
 
-![Alt text](img/Screenshot%20from%202023-01-16%2023-39-05.png)
+Nesta atividade é feito o Login na aplicação através de username e password.
 
-Login Activity
-
+Após verificação da existencia dos mesmo é emitido um token JWT do qual é extraido as Claims importantes e guardadas num Shared Preferences
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,10 +57,22 @@ override fun onCreate(savedInstanceState: Bundle?) {
     }
 ```
 
+### Navegação entre os Fragementos das Reservas (Bookings)
 
--Bookings Adapter
+Na seguinte imagem explica a navegação no item do menu Reservas.
 
-Foi utilizado o BaseAdapter para retornar os booking e os respectivos campos: UserName, Description e StartDate
+![Alt text](img/Screenshot%20from%202023-01-16%2023-39-05.png)
+
+A vista principal das Reservas terá a lista dos bookings e tem duas alternativas seguintes:
+
+- bookingAddFragment para adicionar um novo booking onde tem duas textView para o utilizador preencher a descrição e a sala;
+- bookingDetailsFragment que lista os detalhes do booking e onde o utilizador pode escolher navegar para a vista de atuzaliação ou então apagar a reserva;
+
+### BookingsAdapter
+
+Durante o projeto foram utilizados diversos Adaptadores Personalizados para mostrar informações nas diversas listas.
+
+Foi utilizado o BaseAdapter para retornar os bookings e os respectivos campos: UserName, Description e StartDate, através da View row_booking.
 
 ```kotlin
 inner class BookingsAdapter : BaseAdapter() {
@@ -102,9 +113,10 @@ inner class BookingsAdapter : BaseAdapter() {
     }
 ```
 
--Add Fragment
+### bookingAddFragment
 
 Com o binding adicionamos a descrição e a sala inseridos na textView.
+
 ```kotlin
 binding.bookingAddDescription.editText?.doOnTextChanged { inputText, _, _, _ ->
             description = inputText.toString()
@@ -114,7 +126,8 @@ binding.bookingAddDescription.editText?.doOnTextChanged { inputText, _, _, _ ->
             room = inputText.toString().toInt()
         }
 ```
-Para a data e hora foi implementado o MaterialDatePicker e MaterialTimePicker
+
+Para a data e hora foi implementado o MaterialDatePicker e MaterialTimePicker.
 
 ```kotlin
 binding.bookingAddFinalTimeBtn.setOnClickListener {
@@ -155,7 +168,9 @@ binding.bookingAddFinalTimeBtn.setOnClickListener {
         }
 
 ```
+
 Exceção de erro ao adicionar booking caso campos estejam vazios.
+
 ```kotlin
 binding.bookingAddBtn.setOnClickListener {
             if (description == null || room == null ) {
@@ -165,7 +180,8 @@ binding.bookingAddBtn.setOnClickListener {
 ```
 
 Coloca dados num objecto json e comunica à API
-```
+
+```kotlin
 val json = JSONObject()
             json.put("description", description)
             json.put("room", room)
@@ -181,8 +197,10 @@ val json = JSONObject()
             }
 ```
 
--Details Fragment
-Com o context, verificamos se tem dados e são retornados para as respectivas variaveis
+### bookingDetailsFragment
+
+É feita uma chamada à API, para retirar os dados necessários para construir o fragmento dos detalhes.
+
 ```kotlin
 if (context != null) {
             BookingsBackend.getBooking(context, lifecycleScope, bookingID!!) {
@@ -197,29 +215,28 @@ if (context != null) {
 ```
 
 Botão Update e Delete
+
 ```kotlin
 binding.BookingDetailsBtnUpdate.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_bookingDetailsFragment_to_bookingUpdateFragment,
-                Bundle().apply {
-                    putInt(BookingDetailsFragment.BOOKING_ID, bookingID!!)
-                }
-            )
-        }
-
-        binding.BookingDetailsBtnDelete.setOnClickListener {
-            if (context != null) {
-                BookingsBackend.deleteBooking(context, lifecycleScope, bookingID!!) {
-                    if (it) parentFragmentManager.popBackStack()
-                    else Toast.makeText(context, "Destruição Falhada", Toast.LENGTH_SHORT).show()
-                }
+    findNavController().navigate(
+        R.id.action_bookingDetailsFragment_to_bookingUpdateFragment,
+            Bundle().apply {
+                putInt(BookingDetailsFragment.BOOKING_ID, bookingID!!)
             }
+    )
+}
+binding.BookingDetailsBtnDelete.setOnClickListener {
+    if (context != null) {
+        BookingsBackend.deleteBooking(context, lifecycleScope, bookingID!!) {
+            if (it) parentFragmentManager.popBackStack()
+            else Toast.makeText(context, "Destruição Falhada", Toast.LENGTH_SHORT).show()
         }
+    }
+}
 ```
 
-
-
 ## Conclusão
+
 Com a execução deste trabalho, acreditamos ter concluído com sucesso os objetivos que nos propusemos a concretizar.
 
 Através de alguma investigação e pesquisa, foi possível construir uma aplicação fiável e segura, utilizando também o material e a matéria lecionada durante o semestre letivo.
