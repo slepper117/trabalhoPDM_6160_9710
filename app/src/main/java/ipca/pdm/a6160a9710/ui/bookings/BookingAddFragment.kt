@@ -115,7 +115,6 @@ class BookingAddFragment : Fragment() {
 
             val dateTimeStart = parseDateTimeISO(startDate!!, startTime!!)
             val dateTimeFinal = parseDateTimeISO(finalDate!!, finalTime!!)
-            println(dateTimeStart)
 
             val json = JSONObject()
             json.put("description", description)
