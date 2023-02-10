@@ -1,10 +1,8 @@
 package ipca.pdm.a6160a9710.ui.bookings
 
-import android.content.ClipDescription
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import ipca.pdm.a6160a9710.ui.parseDate
-import ipca.pdm.a6160a9710.ui.parseDateISO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +12,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
-import java.util.*
 import kotlin.collections.ArrayList
 
 object BookingsBackend {

@@ -8,13 +8,10 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import ipca.pdm.a6160a9710.R
 import ipca.pdm.a6160a9710.databinding.FragmentHomeBinding
 import ipca.pdm.a6160a9710.ui.areas.Area
-import ipca.pdm.a6160a9710.ui.areas.AreasBackend
 import ipca.pdm.a6160a9710.ui.bookings.Booking
-import ipca.pdm.a6160a9710.ui.bookings.BookingDetailsFragment
 import ipca.pdm.a6160a9710.ui.clocks.Clock
 import ipca.pdm.a6160a9710.ui.parseDateFull
 

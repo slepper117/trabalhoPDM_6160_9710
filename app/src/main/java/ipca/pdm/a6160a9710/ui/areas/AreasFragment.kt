@@ -23,7 +23,7 @@ class AreasFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAreasBinding.inflate(inflater, container, false)
         return binding.root
     }

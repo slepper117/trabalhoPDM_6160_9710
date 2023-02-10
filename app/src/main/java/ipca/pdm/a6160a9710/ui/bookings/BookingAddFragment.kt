@@ -12,9 +12,9 @@ import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import ipca.pdm.a6160a9710.databinding.FragmentBookingAddBinding
+import ipca.pdm.a6160a9710.ui.parseDateTimeISO
 import ipca.pdm.a6160a9710.ui.parseLongToDateString
 import org.json.JSONObject
-import java.util.*
 
 class BookingAddFragment : Fragment() {
 
@@ -24,7 +24,7 @@ class BookingAddFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentBookingAddBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -34,8 +34,10 @@ class BookingAddFragment : Fragment() {
 
         var description: String? = null
         var room: Int? = null
-        var startDateTime = "2022-12-21T12:00:00.000Z"
-        var finalDateTime = "2022-12-21T12:00:00.000Z"
+        var startDate: String? = null
+        var startTime: String? = null
+        var finalDate: String? = null
+        var finalTime: String? = null
 
         binding.bookingAddDescription.editText?.doOnTextChanged { inputText, _, _, _ ->
             description = inputText.toString()
@@ -52,21 +54,28 @@ class BookingAddFragment : Fragment() {
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
             datePicker.show(this.requireActivity().supportFragmentManager, "tag")
-            binding.bookingAddStartDate.text = datePicker.selection?.parseLongToDateString()
+            datePicker.addOnPositiveButtonClickListener {
+                startDate = datePicker.selection?.parseLongToDateString()
+                binding.bookingAddStartDate.text = startDate
+            }
         }
 
-        binding.bookingAddFinalTimeBtn.setOnClickListener {
-            val picker =
-                MaterialTimePicker.Builder()
-                    .setTimeFormat(TimeFormat.CLOCK_24H)
-                    .setHour(12)
-                    .setMinute(10)
-                    .setTitleText("Selecione a Hora Inicial")
-                    .build()
-            picker.show(this.requireActivity().supportFragmentManager, "tag")
-            val hour = picker.hour.toString()
-            val minute = picker.minute.toString()
-            binding.bookingAddStartTime.text = "${hour}:${minute}"        }
+        binding.bookingAddStartTimeBtn.setOnClickListener {
+            val timePicker = MaterialTimePicker
+                .Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(12)
+                .setMinute(10)
+                .setTitleText("Selecione a Hora Inicial")
+                .build()
+            timePicker.show(this.requireActivity().supportFragmentManager, "tag")
+            timePicker.addOnPositiveButtonClickListener {
+                val hour = timePicker.hour.toString()
+                val minute = timePicker.minute.toString()
+                startTime = "${hour}:${minute}"
+                binding.bookingAddStartTime.text = startTime
+            }
+        }
 
         binding.bookingAddFinalDateBtn.setOnClickListener {
             val datePicker =
@@ -74,35 +83,45 @@ class BookingAddFragment : Fragment() {
                     .setTitleText("Selecione a Data Final")
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build()
-            datePicker.show(this.requireActivity().supportFragmentManager, "tag");
-            binding.bookingAddFinalDate.text = datePicker.selection?.parseLongToDateString()
+            datePicker.show(this.requireActivity().supportFragmentManager, "tag")
+            datePicker.addOnPositiveButtonClickListener {
+                finalDate = datePicker.selection?.parseLongToDateString()
+                binding.bookingAddFinalDate.text = finalDate
+            }
         }
 
         binding.bookingAddFinalTimeBtn.setOnClickListener {
-            val picker =
-                MaterialTimePicker.Builder()
-                    .setTimeFormat(TimeFormat.CLOCK_24H)
-                    .setHour(12)
-                    .setMinute(10)
-                    .setTitleText("Selecione a Hora Final")
-                    .build()
-            picker.show(this.requireActivity().supportFragmentManager, "tag")
-            val hour = picker.hour.toString()
-            val minute = picker.minute.toString()
-            binding.bookingAddFinalTime.text = "${hour}:${minute}"
+            val timePicker = MaterialTimePicker
+                .Builder()
+                .setTimeFormat(TimeFormat.CLOCK_24H)
+                .setHour(12)
+                .setMinute(10)
+                .setTitleText("Selecione a Hora Final")
+                .build()
+            timePicker.show(this.requireActivity().supportFragmentManager, "tag")
+            timePicker.addOnPositiveButtonClickListener {
+                val hour = timePicker.hour.toString()
+                val minute = timePicker.minute.toString()
+                finalTime = "${hour}:${minute}"
+                binding.bookingAddFinalTime.text = finalTime
+            }
         }
 
         binding.bookingAddBtn.setOnClickListener {
-            if (description == null || room == null ) {
-                Toast.makeText(context, "Campos vazios", Toast.LENGTH_SHORT).show()
+            if (description == null || room == null || startDate == null || startTime == null || finalDate == null || finalTime == null) {
+                Toast.makeText(context, "Campos Obrigatórios Vazios", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
+            val dateTimeStart = parseDateTimeISO(startDate!!, startTime!!)
+            val dateTimeFinal = parseDateTimeISO(finalDate!!, finalTime!!)
+            println(dateTimeStart)
 
             val json = JSONObject()
             json.put("description", description)
             json.put("room", room)
-            json.put("start", startDateTime)
-            json.put("final", finalDateTime)
+            json.put("start", dateTimeStart)
+            json.put("final", dateTimeFinal)
 
             val context = activity?.baseContext
             if (context != null) {

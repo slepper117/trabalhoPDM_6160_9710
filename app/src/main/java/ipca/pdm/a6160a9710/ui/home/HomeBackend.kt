@@ -5,7 +5,7 @@ import android.content.Context.MODE_PRIVATE
 import ipca.pdm.a6160a9710.ui.areas.Area
 import ipca.pdm.a6160a9710.ui.bookings.Booking
 import ipca.pdm.a6160a9710.ui.clocks.Clock
-import ipca.pdm.a6160a9710.ui.parseDateTZ
+import ipca.pdm.a6160a9710.ui.parseDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,7 +59,7 @@ object HomeBackend {
 
                                 for (i in 0 until arrayClocks.length()) {
                                     val jsonClock = arrayClocks.getJSONObject(i)
-                                    val clock = Clock(jsonClock.getInt("id"), jsonClock.getString("direction"), jsonClock.getString("datetime").parseDateTZ())
+                                    val clock = Clock(jsonClock.getInt("id"), jsonClock.getString("direction"), jsonClock.getString("datetime").parseDate())
                                     clocks.add(clock)
                                 }
 
@@ -71,7 +71,7 @@ object HomeBackend {
 
                                 for (i in 0 until arrayBookings.length()) {
                                     val jsonBooking = arrayBookings.getJSONObject(i)
-                                    val booking = Booking(jsonBooking.getInt("id"), jsonBooking.getString("start").parseDateTZ(), jsonBooking.getString("description"))
+                                    val booking = Booking(jsonBooking.getInt("id"), jsonBooking.getString("start").parseDate(), jsonBooking.getString("description"))
                                     bookings.add(booking)
                                 }
 

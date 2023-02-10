@@ -24,7 +24,7 @@ class ClocksFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentClocksBinding.inflate(inflater, container, false)
         return binding.root
     }

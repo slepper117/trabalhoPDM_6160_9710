@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import ipca.pdm.a6160a9710.R
 import ipca.pdm.a6160a9710.databinding.FragmentBookingsBinding
 import ipca.pdm.a6160a9710.ui.parseDateFull
@@ -26,7 +25,7 @@ class BookingsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentBookingsBinding.inflate(inflater, container, false)
         return binding.root
     }

@@ -12,7 +12,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
-
 object RootBackend {
     private val client = OkHttpClient()
 
