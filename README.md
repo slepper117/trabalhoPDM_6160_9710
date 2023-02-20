@@ -1,6 +1,15 @@
-# trabalhoPDM_6160_9710
+# trabalhoPDM_6160_9710 - LESI - IPCA
 
-Projeto desenvolvido para a disciplina de Progamação de Dispositivos Móveis
+Projeto desenvolvido para a disciplina de Progamação de Dispositivos Móveis.
+
+Esta disciplina faz parte do terceiro ano curricular da Licenciatura em Engenharia de Sistemas Informáticos.
+
+## Colaboradores
+
+Este trabalho contou com a colaboração dos seguintes alunos:
+
+6160 - Renato Dantas
+9710 - Fábio Mota
 
 ## Introdução
 
