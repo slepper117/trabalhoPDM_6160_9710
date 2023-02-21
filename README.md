@@ -8,8 +8,8 @@ Esta disciplina faz parte do terceiro ano curricular da Licenciatura em Engenhar
 
 Este trabalho contou com a colaboração dos seguintes alunos:
 
-6160 - Renato Dantas
-9710 - Fábio Mota
+- 6160 - Renato Dantas
+- 9710 - Fábio Mota
 
 ## Introdução
 
